@@ -75,3 +75,25 @@ jobs:
           path: dist
           if-no-files-found: error
           retention-days: 7
+  mergeweb:
+    needs:
+      - pug
+      - webpack
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download html
+        uses: actions/download-artifact@v3.0.0
+        with:
+          name: html
+          path: web
+      - name: Download dist
+        uses: actions/download-artifact@v3.0.0
+        with:
+          name: dist
+          path: dist
+      - name: Upload web
+        uses: actions/upload-artifact@v3.1.0
+        with:
+          name: web
+          path: web
+          if-no-files-found: error
