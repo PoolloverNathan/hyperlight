@@ -27,8 +27,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Setup Pages
-        uses: actions/configure-pages@v2
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
@@ -45,18 +43,35 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
-  # Install dependencies
-  deps:
+  pug:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Install modules
         run: npm ci
-      - name: Upload node_modules
+      - name: Compile pug
+        run: npx pug pug --out html
+      - name: Upload html
         uses: actions/upload-artifact@v3.1.0
         with:
-          name: node_modules
-          path: node_modules
-          if-no-files-found: warn
-          retention-days: 1
+          name: html
+          path: html
+          if-no-files-found: error
+          retention-days: 7
+  webpack:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Install modules
+        run: npm ci
+      - name: Run webpack
+        run: npx webpack
+      - name: Upload dist folder
+        uses: actions/upload-artifact@v3.1.0
+        with:
+          name: dist
+          path: dist
+          if-no-files-found: error
+          retention-days: 7
