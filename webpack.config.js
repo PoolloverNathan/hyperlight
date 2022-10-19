@@ -4,7 +4,7 @@ module.exports = {
   entry: {
     main: './src/index.ts',
     sw: './src/sw.ts',
-  }
+  },
   module: {
     rules: [
       {
