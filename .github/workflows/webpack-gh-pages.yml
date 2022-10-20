@@ -21,16 +21,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # Build job
-  setup:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
-        with:
-          path: /
 
   # Deployment job
   deploy:
@@ -38,7 +28,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    needs: setup
+    needs: web
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
@@ -75,3 +65,23 @@ jobs:
           path: dist
           if-no-files-found: error
           retention-days: 7
+  web:
+    needs:
+      - pug
+      - webpack
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download html
+        uses: actions/download-artifact@v3.0.0
+        with:
+          name: html
+          path: web
+      - name: Download dist
+        uses: actions/download-artifact@v3.0.0
+        with:
+          name: dist
+          path: dist
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: web
