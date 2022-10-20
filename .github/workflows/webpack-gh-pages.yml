@@ -21,67 +21,76 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-
   # Deployment job
+  # deploy:
+  #   environment:
+  #     name: github-pages
+  #     url: ${{ steps.deployment.outputs.page_url }}
+  #   runs-on: ubuntu-latest
+  #   needs: webpack
+  #   steps:
+  # pug:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v3
+  #     - name: Install modules
+  #       run: npm ci
+  #     - name: Compile pug
+  #       run: npx pug pug --out html
+  #     - name: Upload html
+  #       uses: actions/upload-artifact@v3.1.0
+  #       with:
+  #         name: html
+  #         path: html
+  #         if-no-files-found: error
+  #         retention-days: 7
+  # node_modules:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v3
+  #     - name: Install modules
+  #       run: npm ci
+  #     - name: Upload node_modules
+  #       uses: actions/upload-artifact@v3.1.0
+  #       with:
+  #         name: node_modules
+  #         path: node_modules
+  #         if-no-files-found: error
+  #         retention-days: 7
   deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: web
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v1
-  pug:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Install modules
-        run: npm ci
-      - name: Compile pug
-        run: npx pug pug --out html
-      - name: Upload html
-        uses: actions/upload-artifact@v3.1.0
+      - name: Download node_modules
+        uses: actions/download-artifact@v3.0.0
         with:
-          name: html
-          path: html
-          if-no-files-found: error
-          retention-days: 7
-  webpack:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Install modules
-        run: npm ci
+          name: node_modules
+          path: node_modules
       - name: Run webpack
         run: npx webpack
-      - name: Upload dist folder
-        uses: actions/upload-artifact@v3.1.0
-        with:
-          name: dist
-          path: dist
-          if-no-files-found: error
-          retention-days: 7
-  web:
-    needs:
-      - pug
-      - webpack
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download html
-        uses: actions/download-artifact@v3.0.0
-        with:
-          name: html
-          path: web
-      - name: Download dist
-        uses: actions/download-artifact@v3.0.0
-        with:
-          name: dist
-          path: dist
+      # - name: Upload dist folder
+      #   uses: actions/upload-artifact@v3.1.0
+      #   with:
+      #     name: dist
+      #     path: dist
+      #     if-no-files-found: error
+      #     retention-days: 7
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          path: web
+          path: static
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
+  # web:
+  #   needs: webpack
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Download dist
+  #       uses: actions/download-artifact@v3.0.0
+  #       with:
+  #         name: dist
+  #         path: static/dist

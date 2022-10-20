@@ -19,10 +19,10 @@ module.exports = {
   },
   output: {
     filename: '[name].js',
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, 'static/dist'),
   },
   devServer: {
-    static: path.join(__dirname, "dist"),
+    static: path.join(__dirname, "static"),
     compress: true,
     port: 4000,
   },
