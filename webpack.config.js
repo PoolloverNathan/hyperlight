@@ -26,4 +26,5 @@ module.exports = {
     compress: true,
     port: 4000,
   },
+  devtool: "eval",
 };
